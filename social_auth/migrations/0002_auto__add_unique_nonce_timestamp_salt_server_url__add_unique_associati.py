@@ -107,7 +107,24 @@ class Migration(SchemaMigration):
             'provider': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'uid': ('django.db.models.fields.CharField', [], {'max_length': str(UID_LENGTH)}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['" + USER_MODEL + "']"})
-        }
+        },
+        'fcelebri.user': {
+            'Meta': {'object_name': 'User'},
+            'birth_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'city': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '75', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'gender': ('django.db.models.fields.CharField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'image': ('frasicelebri.fcelebri.utils.models.CouchImageField', [], {'blank': 'True', 'max_length': '100', 'null': 'True', 'subject': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'middle_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'nation': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'screen_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
+            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'})
+        },
     }
 
     complete_apps = ['social_auth']
