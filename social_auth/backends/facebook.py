@@ -28,7 +28,7 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data, backend_setting, setting,\
     log, dsa_urlopen
 from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed,\
-    AuthTokenError, AuthUnknownError
+    AuthTokenError, AuthUnknownError, AuthIncomplete
 
 
 # Facebook configuration
@@ -78,6 +78,12 @@ class FacebookAuth(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'FACEBOOK_API_SECRET'
     SCOPE_VAR_NAME = 'FACEBOOK_EXTENDED_PERMISSIONS'
     EXTRA_PARAMS_VAR_NAME = 'FACEBOOK_PROFILE_EXTRA_PARAMS'
+    MANDATORY_PERMISSIONS_VAR_NAME = 'FACEBOOK_MANDATORY_PERMISSIONS'
+    
+    def auth_incomplete_url(self):
+        url = super(FacebookAuth, self).auth_url()
+        url = url + '&' + 'auth_type=rerequest'
+        return url
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
@@ -100,6 +106,12 @@ class FacebookAuth(BaseOAuth2):
         else:
             log('debug', 'Found user data for token %s',
                 sanitize_log_data(access_token), extra={'data': data})
+            
+        mandatory = backend_setting(self, self.MANDATORY_PERMISSIONS_VAR_NAME, [])
+        for permission in mandatory:
+            if not data.get(permission, False):
+                raise AuthIncomplete(self, 'Missing mandatory permission %s' % permission)
+            
         return data
 
     def auth_complete(self, *args, **kwargs):

@@ -16,6 +16,7 @@ from django.db import IntegrityError
 
 from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
+from social_auth.exceptions import AuthIncomplete
 from social_auth.decorators import dsa_view, disconnect_view
 
 
@@ -23,6 +24,7 @@ DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL',
                            setting('LOGIN_REDIRECT_URL'))
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 PIPELINE_KEY = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+REREQUEST_DONE_KEY = setting('SOCIAL_AUTH_REREQUEST_DONE_KEY', 'rerequest_done')
 
 
 @dsa_view(setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete'))
@@ -112,6 +114,14 @@ def complete_process(request, backend, *args, **kwargs):
     except IntegrityError:
         url = setting('SIGNUP_ERROR_URL', setting('LOGIN_ERROR_URL'))
         return HttpResponseRedirect(url)
+    except AuthIncomplete:
+        user = None
+        if not request.session.get(REREQUEST_DONE_KEY):
+            request.session[REREQUEST_DONE_KEY] = True
+            if backend.uses_redirect:
+                return HttpResponseRedirect(backend.auth_incomplete_url())
+        else:
+            request.session[REREQUEST_DONE_KEY] = False
 
     if isinstance(user, HttpResponse):
         return user

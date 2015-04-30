@@ -45,6 +45,11 @@ class AuthFailed(AuthException):
                         super(AuthFailed, self).__unicode__()
 
 
+class AuthIncomplete(AuthFailed):
+    """Auth process failed because of some mandatory data missing"""
+    pass
+
+
 class AuthCanceled(AuthException):
     """Auth process was canceled by user."""
     def __unicode__(self):
