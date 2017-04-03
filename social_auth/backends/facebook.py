@@ -131,14 +131,14 @@ class FacebookAuth(BaseOAuth2):
                 'code': self.data['code']
             })
             try:
-                response = cgi.parse_qs(dsa_urlopen(url).read())
+                response = simplejson.loads(dsa_urlopen(url).read())
             except HTTPError:
                 raise AuthFailed(self, 'There was an error authenticating '
                                        'the app')
 
-            access_token = response['access_token'][0]
+            access_token = response['access_token']
             if 'expires' in response:
-                expires = response['expires'][0]
+                expires = response['expires']
 
         if 'signed_request' in self.data:
             response = load_signed_request(
@@ -164,8 +164,7 @@ class FacebookAuth(BaseOAuth2):
 
     @classmethod
     def process_refresh_token_response(cls, response):
-        return dict((key, val[0])
-                        for key, val in cgi.parse_qs(response).iteritems())
+        return simplejson.loads(response)
 
     @classmethod
     def refresh_token_params(cls, token):
