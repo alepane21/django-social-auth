@@ -90,6 +90,7 @@ class FacebookAuth(BaseOAuth2):
         data = None
         params = backend_setting(self, self.EXTRA_PARAMS_VAR_NAME, {})
         params['access_token'] = access_token
+        params['fields'] = 'email,name,first_name,last_name'
         url = FACEBOOK_ME + urlencode(params)
 
         try:
