@@ -79,6 +79,7 @@ class FacebookAuth(BaseOAuth2):
     SCOPE_VAR_NAME = 'FACEBOOK_EXTENDED_PERMISSIONS'
     EXTRA_PARAMS_VAR_NAME = 'FACEBOOK_PROFILE_EXTRA_PARAMS'
     MANDATORY_PERMISSIONS_VAR_NAME = 'FACEBOOK_MANDATORY_PERMISSIONS'
+    REDIRECT_STATE = False
     
     def auth_incomplete_url(self):
         url = super(FacebookAuth, self).auth_url()
